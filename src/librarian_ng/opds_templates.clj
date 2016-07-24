@@ -1,5 +1,6 @@
 (ns librarian-ng.opds-templates
   (:require
+    [ring.util.codec :refer [url-encode]]
     [librarian-ng.opds-tags :as opds]))
 
 (defmacro defn-opds-feed [name args & body]
@@ -32,11 +33,11 @@
   [search-term]
   (opds/entry
     "Search by author"
-    (opds/link (str "/search/author/" search-term)))
+    (opds/link (str "/search/author/" (url-encode search-term))))
   (opds/entry
     "Search by book"
-    (opds/link (str "/search/book/" search-term)))
+    (opds/link (str "/search/book/" (url-encode search-term))))
   (opds/entry
     "Search by sequence"
-    (opds/link (str "/search/seq/" search-term))))
+    (opds/link (str "/search/seq/" (url-encode search-term)))))
 
