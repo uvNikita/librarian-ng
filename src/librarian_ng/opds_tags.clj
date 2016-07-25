@@ -7,12 +7,17 @@
 (defmacro content [content-str]
   {:tag :content :attrs {:type "text"} :content [content-str]})
 
-
 (defmacro link [href & {:keys [type] :or {type "application/atom+xml"}}]
   {:tag :link :attrs {:href href
                       :type type}})
 
 (defmacro entry [title-str & entries]
   `{:tag     :entry
-    :content [~(title title-str)
-              ~@entries]})
+    :content (into [] (flatten[(title ~title-str) ~@entries]))})
+
+(defmacro author [name uri]
+  `{:tag :author
+    :content [{:tag :name
+               :content [~name]}
+              {:tag :uri
+               :content [~uri]}]})
