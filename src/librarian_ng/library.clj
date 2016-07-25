@@ -3,16 +3,32 @@
     [clojure.java.io :as io]
     [clojure.string :as str]
 
-    [clojurewerkz.elastisch.rest :as es]
     [clojurewerkz.elastisch.rest.document :as esd]
+    [clojurewerkz.elastisch.query :as q]
+    [clojurewerkz.elastisch.rest.response :as esrsp]
 
-    [me.raynes.fs :refer [extension]]
-    )
+    [clojurewerkz.elastisch.rest.index :as esi]
+    [me.raynes.fs :refer [extension]])
   (:import
     [java.util.zip ZipFile]
     )
   )
 
+(defrecord Book [id title authors genres seq-title seq-num])
+
+(def mappings
+  {"book" {:properties {:title      {:type "string"}
+                        :authors    {:type "string"}
+                        :annotation {:type "string"}
+                        :id         {:type "integer"}
+                        :genres     {:type "string"}
+                        :seq-title  {:type "string"}
+                        :seq-num    {:type "integer"}}}})
+
+
+
+(defn init-db [conn]
+  (esi/create conn "librarian" :mappings mappings))
 
 (defn parse-inp-entry [entry]
   (let [[authors-raw
@@ -38,7 +54,7 @@
   (map parse-inp-entry (line-seq (io/reader inp))))
 
 (defn add-book! [conn book]
-  (esd/create conn "test" "book" book))
+  (esd/create conn "librarian" "book" book))
 
 (defn add-inpx! [conn filename]
   (with-open [inpx (ZipFile. filename)]
@@ -47,4 +63,7 @@
       (let [books (parse-inp (.getInputStream inpx e))]
         (doall (map #(add-book! conn %) books))))))
 
-
+(defn search-book [conn search-term]
+  (let [res (esd/search conn "librarian" "book" :query (q/match :title search-term))]
+    (reverse (map #(-> % :_source map->Book)
+                  (sort-by :_score (esrsp/hits-from res))))))

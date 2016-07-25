@@ -8,9 +8,9 @@
   {:tag :content :attrs {:type :text} :content [content-str]})
 
 
-(defmacro link [href]
+(defmacro link [href & {:keys [type] :or {type "application/atom+xml"}}]
   {:tag :link :attrs {:href href
-                      :type "application/atom+xml"}})
+                      :type type}})
 
 (defmacro entry [title-str & entries]
   `{:tag     :entry

@@ -7,33 +7,19 @@
 
     [compojure.core :refer [defroutes GET context]]
 
-    [clojurewerkz.elastisch.rest.index :as esi]
-
     [clojure.string :as str]
+    [clojurewerkz.elastisch.rest :as es]
 
-    [librarian-ng.opds-templates :as tmpl])
+    [librarian-ng.opds-templates :as tmpl]
+    [librarian-ng.library :as lib]
+    )
   )
 
-(def books-mapping-type
-  {"book" {:properties {:authors    {:type "string"}
-                        :title      {:type "string"}
-                        :annotation {:type "string"}
-                        :id         {:type "integer"}
-                        :genres     {:type "string"}
-                        :seq-title  {:type "string"}
-                        :seq-num    {:type "integer"}
-                        }}})
-
-(def test-book {:authors ["a1", "a2"]
-                :title   "Super book"
-                :id      1})
-
-(defn init-db [conn]
-  (esi/create conn "test" :mappings books-mapping-type))
+(def es-conn (es/connect "http://127.0.0.1:9200"))
 
 (defn echo-response [& params]
   {:headers {"Content-Type" "text/plain;charset=utf-8"}
-   :body    (str/join " " params)})
+   :body     (with-out-str (clojure.pprint/pprint params))})
 
 
 (def opensearch
@@ -47,14 +33,20 @@
   opds
   (GET "/" [] (response (tmpl/index)))
 
-  (GET "/search" [searchTerm] (response (tmpl/search searchTerm)))
+  (GET "/search" [searchTerm]
+    (response (tmpl/search searchTerm)))
   (context "/search" []
-    (GET "/author/:author" [author] (echo-response author))
-    (GET "/book/:book" [book] (echo-response book))
-    (GET "/seq/:seq" [seq] (echo-response seq)))
+    (GET "/author/:author" [author]
+      (echo-response author))
+    (GET "/book/:book" [book]
+      (->> book (lib/search-book es-conn) (tmpl/books-results) (response)))
+    (GET "/seq/:seq" [seq]
+      (echo-response seq)))
 
-  (GET "/seq/:seq" [author seq] (str author " " seq))
-  (GET "/book/:book-id" [book-id] (str book-id))
+  (GET "/seq/:seq" [author seq]
+    (str author " " seq))
+  (GET "/book/:book-id" [book-id]
+    (str book-id))
 
   (context "/author/:author" [author]
     (GET "/" [] (echo-response author))
@@ -81,6 +73,6 @@
 
 (def app
   (-> opds
-      log-resp
       wrap-xml-response
+      log-resp
       wrap-params))
