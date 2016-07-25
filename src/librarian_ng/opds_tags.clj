@@ -5,7 +5,7 @@
   {:tag :title :content [title-str]})
 
 (defmacro content [content-str]
-  {:tag :content :attrs {:type :text} :content [content-str]})
+  {:tag :content :attrs {:type "text"} :content [content-str]})
 
 
 (defmacro link [href & {:keys [type] :or {type "application/atom+xml"}}]
