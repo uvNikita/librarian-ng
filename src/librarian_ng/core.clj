@@ -7,19 +7,18 @@
 
     [compojure.core :refer [defroutes GET context]]
 
-    [clojure.string :as str]
-    [clojurewerkz.elastisch.rest :as es]
+    [clojurewerkz.elastisch.native :as es]
 
     [librarian-ng.opds-templates :as tmpl]
     [librarian-ng.library :as lib]
-    )
+    [clojure.string :as str])
   )
 
-(def es-conn (es/connect "http://127.0.0.1:9200"))
+(def es-conn (es/connect [["127.0.0.1" 9300]] {"cluster.name" "librarian"}))
 
 (defn echo-response [& params]
   {:headers {"Content-Type" "text/plain;charset=utf-8"}
-   :body     (with-out-str (clojure.pprint/pprint params))})
+   :body    (str/join "\n" params)})
 
 
 (def opensearch

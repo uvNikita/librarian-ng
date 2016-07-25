@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [ring/ring-core "1.5.0"]
                  [compojure "1.5.1"]
-                 [clojurewerkz/elastisch "2.2.1"]
+                 [clojurewerkz/elastisch "2.2.2"]
                  [me.raynes/fs "1.4.6"]]
   :main ^:skip-aot librarian-ng.core
   :target-path "target/%s"

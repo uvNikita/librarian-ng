@@ -3,11 +3,11 @@
     [clojure.java.io :as io]
     [clojure.string :as str]
 
-    [clojurewerkz.elastisch.rest.document :as esd]
+    [clojurewerkz.elastisch.native.document :as esd]
     [clojurewerkz.elastisch.query :as q]
-    [clojurewerkz.elastisch.rest.response :as esrsp]
+    [clojurewerkz.elastisch.native.response :as esrsp]
 
-    [clojurewerkz.elastisch.rest.index :as esi]
+    [clojurewerkz.elastisch.native.index :as esi]
     [me.raynes.fs :refer [extension]])
   (:import
     [java.util.zip ZipFile]
