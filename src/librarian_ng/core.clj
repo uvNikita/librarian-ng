@@ -4,6 +4,7 @@
 
     [ring.middleware.params :refer [wrap-params]]
     [ring.util.response :refer [content-type response]]
+    [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
 
     [compojure.core :refer [defroutes GET context]]
 
@@ -74,4 +75,4 @@
   (-> opds
       wrap-xml-response
       log-resp
-      wrap-params))
+      (wrap-defaults api-defaults)))

@@ -5,6 +5,7 @@
             :url "http://www.opensource.org/licenses/mit-license.php"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [ring/ring-core "1.5.0"]
+                 [ring/ring-defaults "0.2.1"]
                  [compojure "1.5.1"]
                  [clojurewerkz/elastisch "2.2.2"]
                  [me.raynes/fs "1.4.6"]]
