@@ -1,17 +1,9 @@
 (ns librarian-ng.opds-templates
   (:require
     [ring.util.codec :refer [url-encode]]
-    [librarian-ng.opds-tags :as opds]
-    [clojure.string :as str]))
+    [librarian-ng.opds-tags :as opds]))
 
-(defmacro defn-opds-feed [name args & body]
-  `(defn ~name ~args
-     {:tag     :feed
-      :attrs   {:xmlns "http://www.w3.org/2005/Atom"}
-      :content (into [] (flatten [~@body]))}))
-
-
-(defn-opds-feed
+(opds/defn-feed
   index
   []
   (opds/title "Librarian")
@@ -28,7 +20,7 @@
     (opds/content "test content")))
 
 
-(defn-opds-feed
+(opds/defn-feed
   search
   [search-term]
   (opds/entry
@@ -52,7 +44,7 @@
     (map author-entry authors)
     (opds/link (str "/book/" id) :type "application/fb2+zip")))
 
-(defn-opds-feed
+(opds/defn-feed
   books-results
   [books]
   (map book-entry books))

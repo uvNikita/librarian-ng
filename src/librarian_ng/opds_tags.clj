@@ -12,12 +12,18 @@
                       :type type}})
 
 (defmacro entry [title-str & entries]
-  `{:tag     :entry
-    :content (into [] (flatten[(title ~title-str) ~@entries]))})
+  {:tag     :entry
+   :content (into [(title title-str)] entries)})
 
 (defmacro author [name uri]
-  `{:tag :author
+  {:tag :author
     :content [{:tag :name
-               :content [~name]}
+               :content [name]}
               {:tag :uri
-               :content [~uri]}]})
+               :content [uri]}]})
+
+(defmacro defn-feed [name args & body]
+  `(defn ~name ~args
+     {:tag     :feed
+      :attrs   {:xmlns "http://www.w3.org/2005/Atom"}
+      :content (into [] (flatten [~@body]))}))
